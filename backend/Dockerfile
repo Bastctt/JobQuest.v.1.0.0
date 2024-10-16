@@ -1,6 +1,12 @@
 # Utiliser l'image officielle de PHP avec Apache pour Symfony
 FROM php:8.2-apache AS backend
 
+# Augmenter la mémoire disponible pour Composer
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Mettre à jour Composer pour éviter d'éventuels bugs
+RUN composer self-update
+
 # Installer les dépendances requises
 RUN apt-get update && apt-get install -y \
     git \
@@ -20,8 +26,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY backend .
 
-# Installer les dépendances de Symfony
-RUN composer install --no-scripts --no-autoloader --ignore-platform-reqs
+# Installer les dépendances de Symfony avec l'option --prefer-dist
+RUN composer install --no-scripts --no-autoloader --ignore-platform-reqs --prefer-dist
 
 # Configurer les permissions et créer le répertoire de cache et logs
 RUN chown -R www-data:www-data /var/www/html/var
@@ -35,13 +41,14 @@ RUN chmod -R 755 /var/www/html
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite
 
+# Copier le fichier .env
 COPY backend/.env /var/www/html/.env
 
 # Exposer le port 80 pour le serveur Apache
 EXPOSE 80
 
+# Configurer le serveur Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Frontend
@@ -62,7 +69,7 @@ RUN pnpm run build
 
 # Copie des fichiers générés par Vite dans le dossier public du backend
 FROM backend AS final
-COPY --from=frontend /app/build /var/www/html/public
+COPY --from=frontend /app/dist /var/www/html/public
 
 # Démarrer Apache
 CMD ["apache2-foreground"]
