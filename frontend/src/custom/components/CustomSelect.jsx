@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
 
 // Companies
-import { fetchCompanies } from "../../services/companyService";
+import { fetchCompanies } from "../../services/CompanyService";
 
 // MUI
 import {
