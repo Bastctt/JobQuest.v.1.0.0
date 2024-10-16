@@ -11,7 +11,7 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
-import { createCompanies } from "../../../../../services/companyService";
+import { createCompanies } from "../../../../../services/CompanyService";
 
 const AddCompanyModal = ({ open, handleClose }) => {
   const [newCompany, setNewCompany] = useState({
