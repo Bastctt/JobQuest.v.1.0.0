@@ -1,5 +1,5 @@
 # Utiliser l'image officielle de PHP avec Apache pour Symfony
-FROM php:8.2-apache
+FROM php:8.2-apache AS backend
 
 # Installer les dépendances requises
 RUN apt-get update && apt-get install -y \
@@ -18,7 +18,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copier les fichiers de votre projet Symfony dans le conteneur
 WORKDIR /var/www/html
-COPY . .
+COPY backend .
 
 # Installer les dépendances de Symfony
 RUN composer install --no-scripts --no-autoloader --ignore-platform-reqs
@@ -43,6 +43,26 @@ EXPOSE 80
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Frontend
+FROM node:18 AS frontend
+
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Déplacer dans le répertoire frontend
+WORKDIR /app
+
+# Copier le frontend
+COPY frontend .
+
+# Installer les dépendances et construire le frontend
+RUN pnpm install
+RUN pnpm run build
+
+# Copie des fichiers générés par Vite dans le dossier public du backend
+FROM backend AS final
+COPY --from=frontend /app/dist /var/www/html/public
 
 # Démarrer Apache
 CMD ["apache2-foreground"]
