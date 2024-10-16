@@ -4,9 +4,6 @@ FROM php:8.2-apache AS backend
 # Augmenter la mémoire disponible pour Composer
 ENV COMPOSER_MEMORY_LIMIT=-1
 
-# Mettre à jour Composer pour éviter d'éventuels bugs
-RUN composer self-update
-
 # Installer les dépendances requises
 RUN apt-get update && apt-get install -y \
     git \
