@@ -9,7 +9,7 @@
       },
       {
         "src": "back/public/index.php",
-        "use": "@vercel/php"
+        "use": "vercel-php"
       }
     ],
     "routes": [
@@ -22,4 +22,4 @@
         "dest": "/frontend/$1"
       }
     ]
-}
+  }
