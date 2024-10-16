@@ -23,6 +23,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY backend .
 
+# Installer les dépendances de Symfony
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 # Créer le répertoire de cache et logs
 RUN mkdir -p /var/www/html/var
 
