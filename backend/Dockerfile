@@ -35,7 +35,7 @@ RUN chmod -R 755 /var/www/html
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite
 
-COPY .env /var/www/html/.env
+COPY backend/.env /var/www/html/.env
 
 # Exposer le port 80 pour le serveur Apache
 EXPOSE 80
