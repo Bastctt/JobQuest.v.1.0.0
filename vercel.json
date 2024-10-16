@@ -21,5 +21,10 @@
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
-  ]
+  ],
+  "functions": {
+    "back/public/index.php": {
+      "memory": 2048
+    }
+  }
 }
