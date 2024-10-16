@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSnackbar } from "notistack";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "../../services/authService";
+import { registerUser } from "../../services/AuthService";
 
 // MUI
 import { Close as CloseIcon } from "@mui/icons-material";

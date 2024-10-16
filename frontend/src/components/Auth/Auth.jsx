@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSnackbar } from "notistack";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../../services/authService";
+import { loginUser } from "../../services/AuthService";
 import {
   Box,
   Typography,

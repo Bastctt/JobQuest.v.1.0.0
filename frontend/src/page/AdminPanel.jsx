@@ -9,10 +9,9 @@ import TableDataGrid from "./components/TableDataGrid";
 
 // service
 import { getAllUsers } from "../services/userService";
-import { fetchCompanies } from "../services/companyService";
+import { fetchCompanies } from "../services/CompanyService";
 import { fetchJobs } from "../services/advertisementsService";
-import { getAllApplications } from "../services/applyService";
-import { getAllApplicationsNoUser } from "../services/applyService";
+import { getAllApplications, getAllApplicationsNoUser } from "../services/applyService";
 
 const AdminPanel = () => {
   const [selectedTable, setSelectedTable] = useState(null);
