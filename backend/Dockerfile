@@ -62,7 +62,7 @@ RUN pnpm run build
 
 # Copie des fichiers générés par Vite dans le dossier public du backend
 FROM backend AS final
-COPY --from=frontend /app/dist /var/www/html/public
+COPY --from=frontend /app/build /var/www/html/public
 
 # Démarrer Apache
 CMD ["apache2-foreground"]
