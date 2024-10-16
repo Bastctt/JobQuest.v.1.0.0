@@ -16,25 +16,21 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copier les fichiers de votre projet Symfony dans le conteneur
+# Définir le répertoire de travail
 WORKDIR /var/www/html
-COPY backend .
 
-# Configurer les permissions des répertoires avant d'installer les dépendances
+# Copier les fichiers de votre projet Symfony dans le conteneur
+COPY . .
+
+# Installer les dépendances de Symfony
+RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+
+# Configurer les permissions des répertoires
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
-# Installer les dépendances de Symfony sans exécuter les scripts
-RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-autoloader
-
-# Créer le répertoire de cache et logs
-RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
-
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite
-
-# Copier le fichier .env
-COPY backend/.env /var/www/html/.env
 
 # Exposer le port 80 pour le serveur Apache
 EXPOSE 80
@@ -52,7 +48,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copier le frontend
-COPY frontend .
+COPY ../frontend .
 
 # Installer les dépendances et construire le frontend
 RUN pnpm install
