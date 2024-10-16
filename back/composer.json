@@ -78,17 +78,19 @@
     "symfony/polyfill-php81": "*",
     "symfony/polyfill-php82": "*"
   },
-  "scripts": {
+ "scripts": {
     "auto-scripts": {
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd",
       "importmap:install": "symfony-cmd"
     },
     "post-install-cmd": [
-      "@auto-scripts"
+      "@auto-scripts",
+      "composer install --no-dev --optimize-autoloader"
     ],
     "post-update-cmd": [
-      "@auto-scripts"
+      "@auto-scripts",
+      "composer install --no-dev --optimize-autoloader"
     ]
   },
   "conflict": {
