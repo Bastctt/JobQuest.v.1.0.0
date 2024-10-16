@@ -23,10 +23,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY backend .
 
-# Installer les dépendances de Symfony avec l'option --prefer-dist
-RUN composer install --no-scripts --no-autoloader --ignore-platform-reqs --prefer-dist
+# Créer le répertoire de cache et logs
+RUN mkdir -p /var/www/html/var
 
-# Configurer les permissions et créer le répertoire de cache et logs
+# Configurer les permissions pour le répertoire var
 RUN chown -R www-data:www-data /var/www/html/var
 
 # Assure-toi que le propriétaire des fichiers est www-data
