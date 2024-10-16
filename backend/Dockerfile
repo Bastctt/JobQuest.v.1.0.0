@@ -1,9 +1,6 @@
 # Utiliser l'image officielle de PHP avec Apache pour Symfony
 FROM php:8.2-apache AS backend
 
-# Augmenter la mémoire disponible pour Composer
-ENV COMPOSER_MEMORY_LIMIT=-1
-
 # Installer les dépendances requises
 RUN apt-get update && apt-get install -y \
     git \
@@ -23,20 +20,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY backend .
 
+# Configurer les permissions des répertoires avant d'installer les dépendances
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
+
+# Diagnostiquer la configuration de Composer
+RUN composer diagnose
+
 # Installer les dépendances de Symfony
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-autoloader
 
 # Créer le répertoire de cache et logs
-RUN mkdir -p /var/www/html/var
-
-# Configurer les permissions pour le répertoire var
-RUN chown -R www-data:www-data /var/www/html/var
-
-# Assure-toi que le propriétaire des fichiers est www-data
-RUN chown -R www-data:www-data /var/www/html
-
-# Donne les permissions de lecture/exécution nécessaires
-RUN chmod -R 755 /var/www/html
+RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
 
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite
@@ -47,7 +42,6 @@ COPY backend/.env /var/www/html/.env
 # Exposer le port 80 pour le serveur Apache
 EXPOSE 80
 
-# Configurer le serveur Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
