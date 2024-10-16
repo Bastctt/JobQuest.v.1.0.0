@@ -24,10 +24,7 @@ COPY backend .
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
-# Diagnostiquer la configuration de Composer
-RUN composer diagnose
-
-# Installer les dépendances de Symfony
+# Installer les dépendances de Symfony sans exécuter les scripts
 RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-autoloader
 
 # Créer le répertoire de cache et logs
