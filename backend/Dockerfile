@@ -1,7 +1,7 @@
 # Utiliser l'image officielle de PHP avec Apache pour Symfony
 FROM php:8.2-apache AS backend
 
-# Installer les dépendances requises
+# Installer les dépendances requises pour PHP et Apache
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -19,21 +19,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Supprimer les fichiers composer.json et composer.lock existants
-RUN rm -f composer.json composer.lock
-
-# Créer un nouveau fichier composer.json
-RUN composer init --name="jobquest/backend" --require="php:>=8.2" --no-interaction
-
-# Ajouter les dépendances nécessaires
-RUN composer require symfony/framework-bundle doctrine/orm nelmio/api-doc-bundle ...
-
-# Configurer les permissions des répertoires avant installation
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+# Copier les fichiers de votre projet Symfony dans le conteneur
+COPY . .
 
 # Installer les dépendances de Symfony
-RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist --no-progress
+RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+
+# Configurer les permissions des répertoires
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite
@@ -41,6 +35,7 @@ RUN a2enmod rewrite
 # Exposer le port 80 pour le serveur Apache
 EXPOSE 80
 
+# Configurer Apache pour utiliser le dossier 'public' comme racine web
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
