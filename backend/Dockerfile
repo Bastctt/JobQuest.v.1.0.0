@@ -19,15 +19,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier les fichiers de votre projet Symfony dans le conteneur
-COPY . .
+# Supprimer les fichiers composer.json et composer.lock existants
+RUN rm -f composer.json composer.lock
 
-# Installer les dépendances de Symfony
-RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# Créer un nouveau fichier composer.json
+RUN composer init --name="jobquest/backend" --require="php:>=8.2" --no-interaction
 
-# Configurer les permissions des répertoires
+# Ajouter les dépendances nécessaires
+RUN composer require symfony/framework-bundle doctrine/orm nelmio/api-doc-bundle ...
+
+# Configurer les permissions des répertoires avant installation
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
+
+# Installer les dépendances de Symfony
+RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist --no-progress
 
 # Activer le module Apache Rewrite
 RUN a2enmod rewrite

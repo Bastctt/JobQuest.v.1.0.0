@@ -24,3 +24,5 @@
 ###< symfony/asset-mapper ###
 /public/uploads/cvs/
 /public/.htaccess
+
+docker-compose.yml
